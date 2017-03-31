@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #-*-coding:utf-8 -*-
-import lib.img as imgLib
+import src.img as imgLib
 import cv2
 import os
 import sys
