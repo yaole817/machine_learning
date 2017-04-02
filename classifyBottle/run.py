@@ -4,6 +4,7 @@ import src.img as imgLib
 import cv2
 import os
 import sys
+import numpy as np
 dir_path = '.\\res'
 list =  [x for x in os.listdir(dir_path) if os.path.splitext(x)[1]=='.jpg']
 path = dir_path+'\\'+list[int(sys.argv[1])]
@@ -15,7 +16,7 @@ if __name__ == '__main__':
     #img = cv2.imread('./res/xue7.jpg')
     #detect(img)
     img = cv2.imread(path)
-    img = cv2.resize(img, (0,0), fx=0.2, fy=0.2)
+    #img = cv2.resize(img, (0,0), fx=0.2, fy=0.2)
     imgR=img[:,:,0]
     imgG=img[:,:,1]
     imgB=img[:,:,2]
@@ -39,7 +40,17 @@ if __name__ == '__main__':
     imageYellow.extend(imageBlue)
     
     for box in imageYellow:
-        print(box)
-        cv2.drawContours(img, [box], 0, (0, 255, 0), 2)
+        #cv2.drawContours(img, [box], 0, (0, 255, 0), 2)
+        
+        cutImg= imgLib.cutImg(box,img)
+
+        sharpImg = imgLib.SuanSharp(cutImg)
+        gray = cv2.cvtColor(cutImg, cv2.COLOR_BGR2GRAY)
+
+        binaryImg = imgLib.sharpImg(gray,165,185)
+        cv2.imwrite("binary.jpg", sharpImg)
+        cv2.imshow('img',binaryImg)
+        #imgLib.grayHist(gray)
+        cv2.waitKey(0)
     #print(region)
     imgLib.showImage(img)

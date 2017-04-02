@@ -4,6 +4,7 @@ import sys
 import cv2
 import numpy as np
 import random
+from matplotlib import pyplot as plt
 
 def preprocess(gray):
     # 1. Sobel算子，x方向求梯度
@@ -141,7 +142,7 @@ def findBottleCap(img):
         '''
         # 找到最小的矩形，该矩形可能有方向
         rect = cv2.minAreaRect(cnt)
-
+       # rect = cv2.boundingRect()
         
        #print "rect is: "
         #print rect
@@ -189,7 +190,7 @@ def colorDetect(image,option=0):
     gray = cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
     #二值化
     ret,thresh1 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    cv2.imshow('gray',gray)
+    #cv2.imshow('gray',gray)
     #闭操作
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(17, 3))  
     closed = cv2.morphologyEx(thresh1, cv2.MORPH_CLOSE, kernel)  
@@ -222,3 +223,51 @@ def showImage(image):
     #    print image[i]
     cv2.imshow("img",image)
     cv2.waitKey(0)
+
+
+def cutImg(box,img):
+    if box[0][0] != box[1][0]: # img has angle
+            imgCenter  = (box[2] - box[0])/2+box[0]
+            imgHalfLen = np.int0((sum((box[2] - box[0])**2)**0.5)/2.828) # cal the lenth of circle
+            imgNewYMax = imgCenter[1]+imgHalfLen
+            imgNewYMin = imgCenter[1]-imgHalfLen
+            imgNewXMax = imgCenter[0]+imgHalfLen
+            imgNewXMin = imgCenter[0]-imgHalfLen
+    else:
+        imgNewYMax = box[0][1]
+        imgNewYMin = box[1][1]
+        imgNewXMax = box[2][0]
+        imgNewXMin = box[1][0]
+        
+    copy_img   = img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
+    return copy_img
+
+def grayHist(gray):
+    hist= cv2.calcHist([gray], [0], None, [256], [0.0,255.0])
+    plt.figure()#新建一个图像
+    plt.title("Grayscale Histogram")#图像的标题
+    plt.xlabel("Bins")#X轴标签
+    plt.ylabel("# of Pixels")#Y轴标签
+    plt.plot(hist)#画图
+    plt.xlim([0,256])#设置x坐标轴范围
+    plt.show()#显示图像
+
+
+def SuanSharp(image):
+    kernel_size = 3    
+    scale = 1    
+    delta = 0    
+    ddepth = cv2.CV_16S
+    img = cv2.GaussianBlur(image,(3,3),0)    
+    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)    
+    gray_lap = cv2.Laplacian(gray,ddepth,ksize = kernel_size,scale = scale,delta = delta)    
+    dst = cv2.convertScaleAbs(gray_lap)
+    return dst
+def sharpImg(gray,min_num,max_unm):
+    image = gray
+    for i in range(len(image)):
+        for j in range(len(image[i])):
+            if image[i][j]>min_num and image[i][j]<max_unm:
+                image[i][j] = 0
+    return image
+
