@@ -12,8 +12,14 @@ while(cap.isOpened()):
 
     
     image = imgLib.colorDetect(frame,0)
-    image = imgLib.findBottleCap(image)
-    for box in image:
+    imageBlue   = imgLib.findBottleCap(image)
+
+    image = imgLib.colorDetect(frame,1)
+    imageYellow = imgLib.findBottleCap(image)
+    #image = imgLib.findTextRegion(image)
+    imageYellow.extend(imageBlue)
+
+    for box in imageBlue:
         cv2.drawContours(gray, [box], 0, (0, 255, 0), 2)
     cv2.imshow('frame',gray)
     cv2.waitKey(0)

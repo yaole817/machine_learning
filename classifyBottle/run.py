@@ -31,11 +31,14 @@ if __name__ == '__main__':
     #image = cv2.blur(image,(3,3))
     #imgLib.showImage(image)
     image = imgLib.colorDetect(img,0)
-    image = imgLib.findBottleCap(image)
+    imageBlue   = imgLib.findBottleCap(image)
+
+    image = imgLib.colorDetect(img,1)
+    imageYellow = imgLib.findBottleCap(image)
+    #image = imgLib.findTextRegion(image)
+    imageYellow.extend(imageBlue)
     
-  
-    
-    for box in image:
+    for box in imageYellow:
         print(box)
         cv2.drawContours(img, [box], 0, (0, 255, 0), 2)
     #print(region)

@@ -142,8 +142,9 @@ def findBottleCap(img):
         # 找到最小的矩形，该矩形可能有方向
         rect = cv2.minAreaRect(cnt)
 
-        print "rect is: "
-        print rect
+        
+       #print "rect is: "
+        #print rect
 
         # box是四个点的坐标
         box = cv2.boxPoints(rect)
@@ -166,7 +167,7 @@ def colorDetect(image,option=0):
     name = random.randint(0,99)
     img = image
     colorImage = img.copy()
-    _colorImage = img.copy()
+    #_colorImage = img.copy()
     hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
     #cv2.imshow("hsv",hsv)
     #高斯模糊
@@ -175,7 +176,7 @@ def colorDetect(image,option=0):
     # 设定蓝色的阈值
     if(option == 0):
         lower=np.array([100,50,50])
-        upper=np.array([160,255,255])
+        upper=np.array([140,255,255])
     else:
         #黄色
         lower=np.array([15,100,100])
