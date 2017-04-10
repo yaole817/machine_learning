@@ -226,19 +226,20 @@ def showImage(image):
 
 
 def cutImg(box,img):
-    if box[0][0] != box[1][0]: # img has angle
-            imgCenter  = (box[2] - box[0])/2+box[0]
-            imgHalfLen = np.int0((sum((box[2] - box[0])**2)**0.5)/2.828) # cal the lenth of circle
-            imgNewYMax = imgCenter[1]+imgHalfLen
-            imgNewYMin = imgCenter[1]-imgHalfLen
-            imgNewXMax = imgCenter[0]+imgHalfLen
-            imgNewXMin = imgCenter[0]-imgHalfLen
+    #if box[0][0] != box[1][0]: # img has angle
+    imgCenter  = (box[2] - box[0])/2+box[0]
+    imgHalfLen = np.int0((sum((box[2] - box[0])**2)**0.5)/3.6) # cal the lenth of circle
+    imgNewYMax = imgCenter[1]+imgHalfLen
+    imgNewYMin = imgCenter[1]-imgHalfLen
+    imgNewXMax = imgCenter[0]+imgHalfLen
+    imgNewXMin = imgCenter[0]-imgHalfLen
+    '''
     else:
         imgNewYMax = box[0][1]
         imgNewYMin = box[1][1]
         imgNewXMax = box[2][0]
         imgNewXMin = box[1][0]
-        
+    '''   
     copy_img   = img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
     return copy_img
 
@@ -264,10 +265,17 @@ def SuanSharp(image):
     dst = cv2.convertScaleAbs(gray_lap)
     return dst
 def sharpImg(gray,min_num,max_unm):
-    image = gray
+    image = gray 
     for i in range(len(image)):
         for j in range(len(image[i])):
             if image[i][j]>min_num and image[i][j]<max_unm:
                 image[i][j] = 0
     return image
 
+def extractTextOutline(gray):
+    image = gray 
+    for i in range(len(image)):
+        for j in range(len(image[i])):
+            image[i][j] = image[i][j]*2.5
+    return image
+    #hist= cv2.calcHist([gray], [0], None, [256], [0.0,255.0])
