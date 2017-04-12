@@ -52,6 +52,7 @@ if __name__ == '__main__':
         cutImg= imgLib.cutImg(box,img)
         gray = cv2.cvtColor(cutImg,cv2.COLOR_BGR2GRAY) 
         gray = cutImg[:,:,1]
+        imgLib.cutImageFromCircle(gray)
         #gray=cutImg[:,:,0]
         #sharpImg = imgLib.SuanSharp(cutImg)
         #gray = cv2.cvtColor(cutImg, cv2.COLOR_BGR2GRAY)
@@ -73,7 +74,7 @@ if __name__ == '__main__':
         #binaryImg = imgLib.sharpImg(gray,165,185)
         #cv2.imwrite("binary.jpg", sharpImg)
         '''
-        
+        imgLib.grayHist(gray)
         cv2.imshow('img',gray)
         
         #imgLib.grayHist(gray)

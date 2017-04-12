@@ -228,7 +228,7 @@ def showImage(image):
 def cutImg(box,img):
     #if box[0][0] != box[1][0]: # img has angle
     imgCenter  = (box[2] - box[0])/2+box[0]
-    imgHalfLen = np.int0((sum((box[2] - box[0])**2)**0.5)/3.6) # cal the lenth of circle
+    imgHalfLen = np.int0((sum((box[2] - box[0])**2)**0.5)/2.8) # cal the lenth of circle
     imgNewYMax = imgCenter[1]+imgHalfLen
     imgNewYMin = imgCenter[1]-imgHalfLen
     imgNewXMax = imgCenter[0]+imgHalfLen
@@ -243,8 +243,16 @@ def cutImg(box,img):
     copy_img   = img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
     return copy_img
 
+def cutImageFromCircle(gray):
+    imgCenter  = [len(gray)/2,len(gray[0])/2]
+    r = int(len(gray)*9/20)
+    for i in range(len(gray)):
+        for j in range(len(gray[i])):
+            if ((imgCenter[0]-i)**2+(imgCenter[0]-j)**2)>r**2:
+                gray[i][j] = 0
+
 def grayHist(gray):
-    hist= cv2.calcHist([gray], [0], None, [256], [0.0,255.0])
+    hist= cv2.calcHist([gray], [0], None, [256], [1.0,255.0])
     plt.figure()#新建一个图像
     plt.title("Grayscale Histogram")#图像的标题
     plt.xlabel("Bins")#X轴标签
