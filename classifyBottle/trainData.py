@@ -18,12 +18,16 @@ def img2Vect(img,lable):
     imageYellow.extend(imageBlue)
     trainData = []
     lableData = []
+    i = 0
     for box in imageYellow:
         cutImg= imgLib.cutImg(box,img)
-        gray = cv2.cvtColor(cutImg,cv2.COLOR_BGR2GRAY) 
-        gray = cutImg[:,:,1]
-        imgLib.cutImageFromCircle(gray)
-        hist = cv2.calcHist([gray], [0], None, [256], [1.0,255.0])
+        cutImg = cv2.resize(cutImg,(600,600))
+        cv2.imwrite(".\database\\"+lable+str(i)+'.jpg',cutImg)  # write img to database
+        i+=1
+        gray = cv2.cvtColor(cutImg,cv2.COLOR_BGR2GRAY)  # convert img to gray img
+        gray = cutImg[:,:,1] 
+        imgLib.cutImageFromCircle(gray)   
+        hist = cv2.calcHist([gray], [0], None, [256], [1.0,255.0]) # calculate the hist of img
         trainData.append(hist)
         lableData.append(lable)
     return trainData,lable
@@ -34,7 +38,6 @@ def loadImages(filepath):
 
     img = cv2.imread(filepath)
     trainData,lable = img2Vect(img,lable)
-    print lable
     return trainData,lable 
 
 if __name__ == '__main__':

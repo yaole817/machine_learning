@@ -45,11 +45,13 @@ if __name__ == '__main__':
     imageYellow = imgLib.findBottleCap(image)
     #image = imgLib.findTextRegion(image)
     imageYellow.extend(imageBlue)
-    
+    i = 30
     for box in imageYellow:
         #cv2.drawContours(img, [box], 0, (0, 255, 0), 2)
-        
+        i+=1
         cutImg= imgLib.cutImg(box,img)
+        cv2.imshow('img',cutImg)
+        cv2.imwrite(str(i)+'.jpg',cutImg)
         gray = cv2.cvtColor(cutImg,cv2.COLOR_BGR2GRAY) 
         gray = cutImg[:,:,1]
         imgLib.cutImageFromCircle(gray)
@@ -74,8 +76,8 @@ if __name__ == '__main__':
         #binaryImg = imgLib.sharpImg(gray,165,185)
         #cv2.imwrite("binary.jpg", sharpImg)
         '''
-        imgLib.grayHist(gray)
-        cv2.imshow('img',gray)
+        #imgLib.grayHist(gray)
+        
         
         #imgLib.grayHist(gray)
         cv2.waitKey(0)
