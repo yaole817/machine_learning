@@ -74,8 +74,9 @@ def loadDataSet(fileList):
 if __name__ == '__main__':
     
     fileLists = [dir_path+'\\'+item for item in fileList]
-    testData,testlable= creatDataSet('.\database\changshengBlue1.jpg')
+    testData,testlable= creatDataSet('changshengBlue6.jpg')
     dataSets,lables=loadDataSet(fileLists)
+
     result = knn.classify0(testData,dataSets,lables,3)
 
     print result
