@@ -7,13 +7,19 @@ import random
 from matplotlib import pyplot as plt
 
 class BaseImg:
-    def __init__(self):
-        self.img  = []
+    def __init__(self,img,imgName):
+        self.img  = img
+        self.imgName = imgName
         self.gray = []
         self.colorImgBox = []
         self.cutImg = []
+        self.dataSet = []
+        self.lable = []
+
         
     def colorDetect(self,image,option=0):
+        # belong to the color of the image detect the interest areas
+        # 
         name = random.randint(0,99)
         img = image
         colorImage = img.copy()
@@ -79,36 +85,44 @@ class BaseImg:
 
         return boxes
 
-    def blueAndYellowColorDetect(self,img):
+    def blueAndYellowColorDetect(self):
 
-        blueImg    = self.colorDetect(img,0)
+        blueImg    = self.colorDetect(self.img,0)
         blueImgBox = self.findBottleCap(blueImg) 
         self.colorImgBox.extend(blueImgBox)
 
-        yellowImg  = self.colorDetect(img,1)
+        yellowImg  = self.colorDetect(self.img,1)
         yellowImgBox = self.findBottleCap(yellowImg) 
         self.colorImgBox.extend(yellowImgBox)
 
         return self.colorImgBox
 
 
-    def cutImgFrombox(self,boxes,img):
-        #if box[0][0] != box[1][0]: # img has angle
+    def cutImgFrombox(self,boxes):
+        # if box[0][0] != box[1][0]: # img has angle
+        # give to the boxes,which have angle, cut the minmum interest Area
+        # the algorithm is descirbed as:
+        # 1. suppose the boxes is a square 
+        # 2. get the centel of the boxes,calculate the catercorner of square
+        # 3. calculate the length of square,and the points
         for box in boxes:
             imgCenter  = (box[2] - box[0])/2+box[0]
-            imgHalfLen = np.int0((sum((box[2] - box[0])**2)**0.5)/2.8) # cal the lenth of circle
-            imgNewYMax = imgCenter[1]+imgHalfLen
-            imgNewYMin = imgCenter[1]-imgHalfLen
-            imgNewXMax = imgCenter[0]+imgHalfLen
-            imgNewXMin = imgCenter[0]-imgHalfLen
+            imgHalfLen = np.int((sum((box[2] - box[0])**2)**0.5)/2.8) # cal the lenth of circle
+            imgNewYMax = np.int(imgCenter[1]+imgHalfLen)
+            imgNewYMin = np.int(imgCenter[1]-imgHalfLen)
+            imgNewXMax = np.int(imgCenter[0]+imgHalfLen)
+            imgNewXMin = np.int(imgCenter[0]-imgHalfLen)
 
-            cut_img   = img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
+            cut_img   = self.img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
             self.cutImg.append(cut_img)
         return self.cutImg
 
-    def cutGrayFromCircle(self,img):
+    def cutGrayFromCircle(self,cutImg): 
+        #  the interest ares is round, if we want improve the accuracy rate,
+        #  the best method is to cut the outside of the circle
+        #  the input cutImg is squal image from one big image
 
-        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY) 
+        gray = cv2.cvtColor(cutImg,cv2.COLOR_BGR2GRAY) 
         imgCenter  = [len(gray)/2,len(gray[0])/2]
         r = int(len(gray)*9/20)
         for i in range(len(gray)):
@@ -118,6 +132,7 @@ class BaseImg:
         return gray
 
     def gray2GrayHist(self,gray):
+        # calculate the hist of one img belong to the gray image
 
         hist = cv2.calcHist([gray], [0], None, [256], [1.0,255.0])
         hist = np.int0(hist)
@@ -125,22 +140,31 @@ class BaseImg:
 
         return grayHistArray  
 
+    def getLable(self):
+        # set lable of one Image from the image name
+        lable = self.imgName.split('\\')[-1]
+        index = lable.index('_')
+
+        return lable[:index]
+
+    def createDataSets(self): 
+        # create date set from one img
+        #  
+        colorImgBoxes = self.blueAndYellowColorDetect()
+        cutImg  = self.cutImgFrombox(colorImgBoxes)
+        for item in cutImg:
+            gray = self.cutGrayFromCircle(item)
+            gray_hist = self.gray2GrayHist(gray)
+            self.dataSet.append(gray_hist)
+            self.lable.append(self.getLable())
+        return self.dataSet
+
     def saveImg(self,img,name):
         cv2.imwrite(name,img)
 
-    def creatDataSet(self,img,name):
-        self.saveImg(img,name)
-
-def trainDataSets():
-    baseImg  = BaseImg()
-    colorImgBoxes = baseImg.blueAndYellowColorDetect(img)
-    cutImg  = baseImg.cutImgFrombox(colorImgBoxes,img)
-    for item in cutImg:
-        gray = baseImg.cutGrayFromCircle(item)
-        
-
 
 def grayHist(gray):
+    # display hist of One image due to gray image
     hist= cv2.calcHist([gray], [0], None, [256], [1.0,255.0])
     plt.figure()#新建一个图像
     plt.title("Grayscale Histogram")#图像的标题
@@ -155,3 +179,11 @@ def showImage(image):
     #    print image[i]
     cv2.imshow("img",image)
     cv2.waitKey(0)
+
+
+if __name__ == '__main__':
+    img_name = 'changshengBlue_0.jpg'
+    img = cv2.imread(img_name)
+    baseImg = BaseImg(img,img_name)
+    print baseImg.createDataSets()
+    print baseImg.lable
