@@ -14,7 +14,8 @@ class BaseImg:
         self.colorImgBox = []
         self.cutImg = []
         self.dataSet = []
-        self.lable = []
+        self.lable = []    # differ to other object
+        self.centers = []  # place the lable
 
         
     def colorDetect(self,image,option=0):
@@ -115,6 +116,7 @@ class BaseImg:
 
             cut_img   = self.img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
             self.cutImg.append(cut_img)
+            self.centers.append(imgCenter)
         return self.cutImg
 
     def cutGrayFromCircle(self,cutImg): 
@@ -180,6 +182,11 @@ def showImage(image):
     cv2.imshow("img",image)
     cv2.waitKey(0)
 
+def loadDataSet(path):
+    img = cv2.imread(img_name)
+    baseImg = BaseImg(img,img_name)
+    
+    return baseImg.dataSet,baseImg.lable
 
 if __name__ == '__main__':
     img_name = 'changshengBlue_0.jpg'
@@ -187,3 +194,4 @@ if __name__ == '__main__':
     baseImg = BaseImg(img,img_name)
     print baseImg.createDataSets()
     print baseImg.lable
+    print baseImg.centers
