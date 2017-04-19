@@ -7,7 +7,7 @@ import random
 from matplotlib import pyplot as plt
 
 class BaseImg:
-    def __init__(self,img,imgName):
+    def __init__(self,img,imgName=''):
         self.img  = img
         self.imgName = imgName
         self.gray = []
@@ -183,9 +183,9 @@ def showImage(image):
     cv2.waitKey(0)
 
 def loadDataSet(path):
-    img = cv2.imread(img_name)
-    baseImg = BaseImg(img,img_name)
-    
+    img = cv2.imread(path)
+    baseImg = BaseImg(img,path)
+
     return baseImg.dataSet,baseImg.lable
 
 if __name__ == '__main__':
