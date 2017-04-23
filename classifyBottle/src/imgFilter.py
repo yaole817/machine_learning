@@ -7,7 +7,7 @@ import random
 from matplotlib import pyplot as plt
 
 class BaseImg:
-    def __init__(self,img,imgName=''):
+    def __init__(self,img,imgName='_'):
         self.img  = img
         self.imgName = imgName
         self.gray = []
@@ -81,25 +81,25 @@ class BaseImg:
 
             # box是四个点的坐标
             box = cv2.boxPoints(rect)
-
+            box = np.int0(box)
             boxes.append(box)
 
         return boxes
 
-    def blueAndYellowColorDetect(self):
+    def blueAndYellowColorDetect(self,img):
 
-        blueImg    = self.colorDetect(self.img,0)
+        blueImg    = self.colorDetect(img,0)
         blueImgBox = self.findBottleCap(blueImg) 
         self.colorImgBox.extend(blueImgBox)
 
-        yellowImg  = self.colorDetect(self.img,1)
+        yellowImg  = self.colorDetect(img,1)
         yellowImgBox = self.findBottleCap(yellowImg) 
         self.colorImgBox.extend(yellowImgBox)
 
         return self.colorImgBox
 
 
-    def cutImgFrombox(self,boxes):
+    def cutImgFrombox(self,boxes,img):
         # if box[0][0] != box[1][0]: # img has angle
         # give to the boxes,which have angle, cut the minmum interest Area
         # the algorithm is descirbed as:
@@ -114,7 +114,7 @@ class BaseImg:
             imgNewXMax = np.int(imgCenter[0]+imgHalfLen)
             imgNewXMin = np.int(imgCenter[0]-imgHalfLen)
 
-            cut_img   = self.img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
+            cut_img   = img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
             self.cutImg.append(cut_img)
             self.centers.append(imgCenter)
         return self.cutImg
@@ -152,8 +152,9 @@ class BaseImg:
     def createDataSets(self): 
         # create date set from one img
         #  
-        colorImgBoxes = self.blueAndYellowColorDetect()
-        cutImg  = self.cutImgFrombox(colorImgBoxes)
+        colorImgBoxes = self.blueAndYellowColorDetect(self.img)
+        cutImg  = self.cutImgFrombox(colorImgBoxes,self.img)
+        cutImg.pop(0)
         for item in cutImg:
             gray = self.cutGrayFromCircle(item)
             gray_hist = self.gray2GrayHist(gray)
