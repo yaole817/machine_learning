@@ -15,7 +15,7 @@ class BaseImg:
         self.cutImg = []
         self.dataSet = []
         self.lable = []    # differ to other object
-        self.centers = []  # place the lable
+
 
         
     def colorDetect(self,image,option=0):
@@ -81,9 +81,26 @@ class BaseImg:
 
             # box是四个点的坐标
             box = cv2.boxPoints(rect)
+        # if box[0][0] != box[1][0]: # img has angle
+        # give to the boxes,which have angle, cut the minmum interest Area
+        # the algorithm is descirbed as:
+        # 1. suppose the boxes is a square 
+        # 2. get the centel of the boxes,calculate the catercorner of square
+            imgCenter  = (box[2] - box[0])/2+box[0]
+            imgHalfLen = np.int((sum((box[2] - box[0])**2)**0.5)/2.8) # cal the lenth of circle
+            imgNewYMax = np.int(imgCenter[1]+imgHalfLen)
+            imgNewYMin = np.int(imgCenter[1]-imgHalfLen)
+            imgNewXMax = np.int(imgCenter[0]+imgHalfLen)
+            imgNewXMin = np.int(imgCenter[0]-imgHalfLen)
+
+            box[0][0] = box[1][0]  =  imgNewXMin
+            box[2][0] = box[3][0]  =  imgNewXMax
+            box[0][1] = box[3][1]  =  imgNewYMax
+            box[1][1] = box[2][1]  =  imgNewYMin
+            if imgNewXMin < 0 or  imgNewXMax >img.shape[1] or imgNewYMin < 0 or imgNewYMax>img.shape[0]:
+                continue
             box = np.int0(box)
             boxes.append(box)
-
         return boxes
 
     def blueAndYellowColorDetect(self,img):
@@ -107,16 +124,13 @@ class BaseImg:
         # 2. get the centel of the boxes,calculate the catercorner of square
         # 3. calculate the length of square,and the points
         for box in boxes:
-            imgCenter  = (box[2] - box[0])/2+box[0]
-            imgHalfLen = np.int((sum((box[2] - box[0])**2)**0.5)/2.8) # cal the lenth of circle
-            imgNewYMax = np.int(imgCenter[1]+imgHalfLen)
-            imgNewYMin = np.int(imgCenter[1]-imgHalfLen)
-            imgNewXMax = np.int(imgCenter[0]+imgHalfLen)
-            imgNewXMin = np.int(imgCenter[0]-imgHalfLen)
+            imgNewXMin = box[0][0] 
+            imgNewXMax = box[2][0]
+            imgNewYMax = box[0][1]
+            imgNewYMin = box[1][1]
 
             cut_img   = img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
             self.cutImg.append(cut_img)
-            self.centers.append(imgCenter)
         return self.cutImg
 
     def cutGrayFromCircle(self,cutImg): 
