@@ -93,3 +93,6 @@ ENV/
 #video
 
 *.mp4
+
+#image
+*.jpg
