@@ -130,6 +130,7 @@ class BaseImg:
             imgNewYMin = box[1][1]
 
             cut_img   = img[imgNewYMin:imgNewYMax, imgNewXMin:imgNewXMax]
+            cut_img = cv2.resize(cut_img,(600,600))
             self.cutImg.append(cut_img)
         return self.cutImg
 
@@ -140,7 +141,7 @@ class BaseImg:
 
         gray = cv2.cvtColor(cutImg,cv2.COLOR_BGR2GRAY) 
         imgCenter  = [len(gray)/2,len(gray[0])/2]
-        r = int(len(gray)*9/20)
+        r = int(len(gray)*4/5)
         for i in range(len(gray)):
             for j in range(len(gray[i])):
                 if ((imgCenter[0]-i)**2+(imgCenter[0]-j)**2)>r**2:

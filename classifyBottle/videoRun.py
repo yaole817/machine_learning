@@ -41,13 +41,11 @@ if __name__ == '__main__':
         frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5)
         videoImg = imgFilter.BaseImg(frame)
         testSet  = videoImg.createDataSets()
-        print len(testSet)
-        print len(videoImg.colorImgBox)
         for i in range(len(videoImg.colorImgBox)-1):
             box = videoImg.colorImgBox[i]
             test_img = testSet[i]
 
-            result_lable = knn.classify0(test_img,dataSets,dataLables,3)
+            result_lable = knn.classify0(test_img,dataSets,dataLables,5)
 
             cv2.drawContours(frame, [box], 0, (0, 255, 0), 2)
             imgCenter  = (box[2] - box[0])/2+box[0]
