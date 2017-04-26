@@ -22,9 +22,8 @@ class BaseImg:
         # belong to the color of the image detect the interest areas
         # 
         name = random.randint(0,99)
-        img = image
-        colorImage = img.copy()
-        #_colorImage = img.copy()
+        img = image.copy()
+        
         hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
         #cv2.imshow("hsv",hsv)
         #高斯模糊
@@ -169,9 +168,11 @@ class BaseImg:
         #  
         colorImgBoxes = self.blueAndYellowColorDetect(self.img)
         cutImg  = self.cutImgFrombox(colorImgBoxes,self.img)
-        cutImg.pop(0)
+        if cutImg[0]==[]:
+            cutImg.pop(0)
         for item in cutImg:
-            gray = self.cutGrayFromCircle(item)
+            #gray = self.cutGrayFromCircle(item)
+            gray = cv2.cvtColor(item,cv2.COLOR_BGR2GRAY) 
             gray_hist = self.gray2GrayHist(gray)
             self.dataSet.append(gray_hist)
             self.lable.append(self.getLable())
