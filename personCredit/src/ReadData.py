@@ -7,6 +7,9 @@ class ReadData(object):
 	@property
 	def dataFrame(self):
 		return self._dataFrame
+	@dataFrame.setter
+	def dataFrame(self,value):
+		self._dataFrame=self._dataFrame
 
 
 userInfoPath= "../data/train/browse_history_train.txt"
