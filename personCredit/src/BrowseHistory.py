@@ -1,8 +1,10 @@
-import FileOperator
 import pandas as pd
-class BrowseHistory:
-	def __init__(self,browseList):
-		self.dataFrame = pd.read_table(userInfoPath,names = ['id','timeStamp','browse','browseChild'],sep=',')
+from ReadData import ReadData
+
+class BrowseHistory():
+	def __init__(self,infoPath):
+		rd = ReadData(infoPath,['id','timeStamp','browse','browseChild'])
+		self.dataFrame = rd.dataFrame
 
 	def parseData(self):
 		print self.dataFrame
