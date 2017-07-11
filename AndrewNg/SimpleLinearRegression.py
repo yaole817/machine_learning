@@ -62,4 +62,22 @@ ax.plot(np.arange(iters),cost)
 ax.set_xlabel('Iterations')
 ax.set_ylabel('Cost')
 ax.set_title('Error vs Training Epoch')
+
+
+
+from sklearn import linear_model
+model = linear_model.LinearRegression()
+model.fit(X,y)
+
+x = np.array(X[:,1].A1)
+f = model.predict(X).flatten()
+
+fig,ax = plt.subplots(figsize= (12,8))
+ax.plot(x,f,'r',label = 'Predirion')
+ax.scatter(data.Population,data.Profit,label ="Training data")
+ax.legend(loc = 2)
+ax.set_xlabel("Population")
+ax.set_ylabel("Profit")
+ax.set_title("Predicted Profit vs. Population Size")
+
 plt.show()
