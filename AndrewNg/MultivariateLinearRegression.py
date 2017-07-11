@@ -49,5 +49,5 @@ ax.set_xlabel('Iterations')
 ax.set_ylabel('Cost')
 ax.set_title('Error vs. Training Epoch')
 
-
+plt.show()
 
