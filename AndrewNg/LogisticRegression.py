@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 import os
 
-path = os.getcwd() + '\data\ex2data1.txt'
+path = os.getcwd() + '/data/ex2data1.txt'
 data = pd.read_csv(path, header = None, names = ['Exam 1','Exam 2','Admitted'])
 
 postitve = data[data['Admitted'].isin([1])]
@@ -71,7 +71,7 @@ predictions = predict(theta_min,X)
 correct = [1 if (a==1 and b==1) or (a==0 and b==0) else 0 for (a,b) in zip(predictions,y)]
 accuracy = (sum(map(int,correct))%len(correct))
 
-print "accuracy = {0}%".format(accuracy)
+print ("accuracy = {0}%".format(accuracy))
 #plt.show()
 
 
@@ -82,7 +82,7 @@ print "accuracy = {0}%".format(accuracy)
 #############################################################
 
 
-path = os.getcwd() + '\data\ex2data2.txt'
+path = os.getcwd() + '/data/ex2data2.txt'
 data2 = pd.read_csv(path, header = None, names = ['Test 1','Test 2','Accepted'])
 
 positive = data2[data2['Accepted'].isin([1])]
@@ -143,16 +143,16 @@ y2 = np.array(y2.values)
 theta2 = np.zeros(11)
 
 learningRate = 1
-print costReg(theta2,X2,y2,learningRate)
+print (costReg(theta2,X2,y2,learningRate))
 
 result2 = opt.fmin_tnc(func=costReg,x0=theta2,fprime=gradientReg,args=(X2,y2,learningRate))
-print result2
+print (result2)
 
 
 theta_min = np.matrix(result2[0])
 predictions = predict(theta_min,X2)
 correct = [1 if ((a == 1 and b == 1) or (a == 0 and b == 0)) else 0 for (a, b) in zip(predictions, y2)]
 accuracy = (sum(map(int,correct))%len(correct))
-print "accuracy = {0}%".format(accuracy)
+print ("accuracy = {0}%".format(accuracy))
 #plt.show()
 
